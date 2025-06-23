@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Submission & Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .feedback-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 40px;
+        }
+
+        .feedback-form h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+
+        canvas {
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="feedback-form">
+        <h2>Feedback Submission</h2>
+        <form id="commandForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <select id="rating" name="rating" required>
+                    <option value="">Select a rating</option>
+                    <option value="5">Excellent (5)</option>
+                    <option value="4">Very Good (4)</option>
+                    <option value="3">Good (3)</option>
+                    <option value="2">Fair (2)</option>
+                    <option value="1">Poor (1)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="commands">Commands:</label>
+                <textarea id="commands" name="commands" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <button type="submit">Submit Command</button>
+            </div>
+        </form>
+    </div>
+
+    <canvas id="ratingChart"></canvas>
+
+    <script>
+        const form = document.getElementById('commandForm');
+        const ratingData = [0, 0, 0, 0, 0]; // Index 0 -> Rating 1, ..., Index 4 -> Rating 5
+
+        const ctx = document.getElementById('ratingChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Poor (1)', 'Fair (2)', 'Good (3)', 'Very Good (4)', 'Excellent (5)'],
+                datasets: [{
+                    label: 'Number of Ratings',
+                    data: ratingData,
+                    backgroundColor: '#4CAF50'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                }
+            }
+        });
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const rating = parseInt(document.getElementById('rating').value);
+            if (!isNaN(rating) && rating >= 1 && rating <= 5) {
+                ratingData[rating - 1]++;
+                chart.update();
+                alert('Command submitted successfully!');
+                form.reset();
+            }
+        });
+    </script>
+</body>
+</html>
